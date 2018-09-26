@@ -124,22 +124,22 @@ upsampled_logits_l = tf.nn.conv2d_transpose(logits, upsample_filter_tensor_x2,
 #将16s和反向运算的结果进行拼接
 upsampled_logits_16s = upsampled_logits_l + aux_logits_16s
 
-upsample_filter_np_16s_x2 = bilinear_upsample_weights(2,  # upsample_factor,$
-                                                          number_of_classes)$
+upsample_filter_np_16s_x2 = bilinear_upsample_weights(2,  # upsample_factor,
+                                                          number_of_classes)
 upsample_filter_tensor_16s_x2 = tf.Variable(upsample_filter_np_x16, name='vgg_16/fc8/t_conv16s_x2')
 #再次进行反向卷积运算,此次卷积长宽会扩大16倍,14x16即恢复输入图片大小224x224
 #原本只有16s时这里会将图片扩大16倍,但是为了加入8s,这里调整步长为2,声称图片将会和8s节点特征图大小相同
-upsampled_logits_16s = tf.nn.conv2d_transpose(upsampled_logits_16s, upsample_filter_tensor_16s_x2,$
-                                          output_shape=tf.shape(aux_logits_8s),$
-                                          strides=[1, 2, 2, 1],$
+upsampled_logits_16s = tf.nn.conv2d_transpose(upsampled_logits_16s, upsample_filter_tensor_16s_x2,
+                                          output_shape=tf.shape(aux_logits_8s),
+                                          strides=[1, 2, 2, 1],
                                           padding='SAME')
 
 #接下来进行最后8s加入8s的拼接
 #将以上得出的logits+16s的结果与8s进行拼接
 upsampled_logits_8s = upsampled_logits_16s + aux_logits_8s
 
-upsample_filter_np_x16 = bilinear_upsample_weights(upsample_factor,$
-                                                   number_of_classes)$
+upsample_filter_np_x16 = bilinear_upsample_weights(upsample_factor,
+                                                   number_of_classes)
 upsample_filter_tensor_x16 = tf.Variable(upsample_filter_np_x16, name='vgg_16/fc8/t_conv_x16')
 
 upsampled_logits = tf.nn.conv2d_transpose(upsampled_logits_8s, upsample_filter_tensor_x16,
