@@ -126,7 +126,7 @@ upsampled_logits_16s = upsampled_logits_l + aux_logits_16s
 
 upsample_filter_np_16s_x2 = bilinear_upsample_weights(2,  # upsample_factor,
                                                           number_of_classes)
-upsample_filter_tensor_16s_x2 = tf.Variable(upsample_filter_np_x16, name='vgg_16/fc8/t_conv16s_x2')
+upsample_filter_tensor_16s_x2 = tf.Variable(upsample_filter_np_16s_x2, name='vgg_16/fc8/t_conv16s_x2')
 #再次进行反向卷积运算,此次卷积长宽会扩大16倍,14x16即恢复输入图片大小224x224
 #原本只有16s时这里会将图片扩大16倍,但是为了加入8s,这里调整步长为2,声称图片将会和8s节点特征图大小相同
 upsampled_logits_16s = tf.nn.conv2d_transpose(upsampled_logits_16s, upsample_filter_tensor_16s_x2,
